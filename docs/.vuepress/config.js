@@ -1,21 +1,42 @@
 module.exports = {
-  title: 'Adroi媒体API 接口文档',  // 设置网站标题
-  description : 'Adroi',
-  base : '/v1/adroi-h5/adroiapi/',
-  themeConfig : {
-    nav : [
-        { text: '接口定义', link: '/apiword' },
-        { text: '接口字段定义', link: '/api' },
-        { text: '附录：错误码', link: '/error' }
-    ],
-    sidebar: {
-        '/' : [
-      "/", //指的是根目录的md文件 也就是 README.md 里面的内容
-            "apiword", // 根目录创建 apiword.md文件
-            "api",      //根目录创建 api.md文件
-            "error"    //根目录创建 error.md文件
+  title: 'Vue开发实战',
+  description: '好好学习-天天向上',
+  head: [
+    ['link',{
+      rel: 'icon',
+      href: `/img/favicon.ico`
+    }]
+  ],
+  dest: './docs/./vuepresss/dist',
+  ga: "",
+  evergreen: true,
+  themeConfig:{
+    nav:[
+      {text:'首页',link:'/'},
+      {text:'软件',link:'/tools/'},
+      {
+        text:'Vue',
+        items:[
+          {text:'Vue.js基础',link:'/vue/tutorial/'},
+          {text:'Vue项目开发',link:'/vue/project/'},
         ]
-    },
-    sidebarDepth : 2
+      }
+    ],
+    sidebarDepth: 2,
+    sidebar: [
+     {
+      title: '工具软件',
+      collapsable: true,
+      children: ['/tools/']
+     },{
+       title: 'Vue基础',
+       collapsable: true,
+       children: ['/vue/tutorial']
+     },{
+      title: 'Vue项目开发',
+      collapsable: true,
+      children: ['/vue/project']
+    }
+    ]
   }
 }
