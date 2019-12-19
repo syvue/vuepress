@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "better-scroll": "^1.15.2"
+    "better-scroll": "^1.15.2",
+    "vuepress": "^1.2.0"
   }
 }
