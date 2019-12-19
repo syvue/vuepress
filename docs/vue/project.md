@@ -2856,3 +2856,410 @@ export default {
 
 * Alphabet.vue
 
+### 字母列表功能实现
+
+> 我们需要实现两个功能：
+> * 单击字母来实现对应字母列表的自动跳转
+> * 通过在字母表上的拖动来实现对应列表的滚动展示
+> 
+>  具体代码如下:
+
+```javascript
+<template>
+  <ul class="list">
+      <!-- 通过v-for循环 遍历传递进来的cities里的数据 -->
+      <!-- v-for="(item,key) of cities"  -->
+      <!-- :key="key" -->
+      <li class="item" 
+      v-for="item of letters"
+      :key="item"
+      :ref='item'
+      @click="handleLetterClick"
+      @touchstart='handleTouchStart'
+      @touchmove='handleTouchMove'
+      @touchend='handleTouchEnd'
+      >
+      <!-- {{key}}</li> -->
+      {{item}}</li>
+      <!--通过click事件绑定对应的点击事件和触屏事件方法-->
+  </ul>
+</template>
+
+<script>
+export default {
+  name: 'CityAlphabet',
+  // props指定传递的数据的类型
+  props:{
+    cities: Object
+  },
+  computed: {
+    letters () {
+      const letters = []
+      for (let i in this.cities) {
+        letters.push(i)
+      }
+      return letters
+    }
+  },
+  // 初始化data数据，设定触屏状态为false
+  data () {
+    return {
+      touchStatus: false
+    }
+  },
+  // 处理点击事件和触屏事件的方法
+  methods:{
+    // 处理字母单击函数
+    handleLetterClick (e) {
+      // 通过$emit触发change事件并传入单击事件获取的参数
+      this.$emit('change',e.target.innerText)
+      // 
+      // console.log(e)
+      // console.log(e.target.innerText)
+      // 输出通过点击获取到的参数e
+    },
+    // 设定触屏开始，将状态为true
+    handleTouchStart () {
+      this.touchStatus = true
+     },
+    // 处理触屏移动事件，接受参数e
+    // startY 为获取字母A的顶点位置参数
+    // touchY 为
+    handleTouchMove (e) {
+      const startY = this.$refs['A'][0].offsetTop
+      // console.log(startY)
+      const touchY = e.touches[0].clientY - 79
+      // console.log(touchY)
+      const index = Math.floor((touchY - startY) / 20)
+      if (index >=0 &&  index < this.letters.length){
+        this.$emit('change',this.letters[index])
+      }
+      console.log(index)
+    },
+    // 触屏状态结束，将状态设为false
+    handleTouchEnd () {
+      this.touchStatus = false
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+  //略
+</style>
+```
+
+* Alphabet.vue
+
+```javascript
+<template>
+  <div>
+    <city-header></city-header>
+    <city-search></city-search>
+    <!-- 将axios获取的json数据cities,hotCities传递给List局部组件 -->
+    <!-- 将letter参数在传递给List局部组件 -->
+    <city-list :cities='cities' 
+               :hot='hotCities'
+               :letter='letter'
+               ></city-list>
+   <!-- 将axios获取的json数据citites传递给alphabet局部组件 -->
+    <city-alphabet 
+               :cities='cities'
+               @change='handleLetterChange'
+               >
+  <!--监听Alphabet组件里的change事件-->
+               </city-alphabet>
+  </div>
+</template>
+
+<script>
+import CityHeader from './components/Header'
+import CitySearch from './components/Search'
+import CityList from './components/List'
+import CityAlphabet from './components/Alphabet'
+import axios from 'axios'
+// 导入axios
+export default {
+  name: 'City',
+  components:{
+    CityHeader,
+    CitySearch,
+    CityList,
+    CityAlphabet
+  },
+  // 通过data初始化数据
+  // 初始化传递过来的letter数据
+  data () {
+    return {
+      cities: {},
+      hotCities: [],
+      letter:''
+    }
+  },
+  // 通过getCityInfo函数获取city.json里的数据，然后传递给handleGetCityInfoSucc函数
+  methods:{
+    getCityInfo () {
+      axios.get('/api/city.json').then(this.handleGetCityInfoSucc)
+    },
+    handleGetCityInfoSucc (res) {
+      res =res.data
+      if(res.ret && res.data){
+        const data = res.data
+        this.cities = data.cities
+        this.hotCities = data.hotCities
+      }
+      // console.log(res)
+    },
+    // change事件接收传递过来的参数letter
+    handleLetterChange (letter) {
+      this.letter = letter
+      // console.log(letter)
+    }
+  },
+  // 在生命周期里调用getCityInfo函数
+  mounted () {
+    this.getCityInfo()
+  }
+}
+
+</script>
+
+<style lang="stylus" scoped>
+  // 略
+</style>
+
+```
+
+* City.vue
+
+```javascript
+<template>
+  <div class="list" ref="wrapper">
+    <!-- 添加 ref  -->
+    <div>
+      <div class="area">
+        <div class="title border-topbottom">当前城市</div>
+        <div class="button-list">
+          <div class="button-wrapper">
+            <div class="button">北京</div>
+          </div>
+        </div>
+      </div>
+      <div class="area">
+        <div class="title border-topbottom">热门城市</div>
+        <div class="button-list">
+          <!-- 通过item循环遍历传入的数据hot -->
+          <div class="button-wrapper" 
+              v-for="item of hot" 
+              :key="item.id">
+            <div class="button">{{item.name}}</div>
+          </div>
+        </div>
+      </div>
+      <!-- 添加ref值为key -->
+      <div class="area" 
+      v-for="(item, key) of cities" 
+      :key='key'
+      :ref='key'
+      >
+        <div class="title border-topbottom">{{key}}</div>
+        <div class="item-list">
+          <div class="item border-bottom" 
+          v-for="innerItem of item"
+          :key="innerItem.id"
+          >
+          {{innerItem.name}}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import Bscroll from "better-scroll";
+// 添加better-scroll
+export default {
+  name: "CityList",
+  // props种指定传入数据的类型
+  // 指定接收传入的letter数据类型为String
+  props: {
+    hot: Array,
+    cities: Object,
+    letter: String
+  },
+  // 添加声明周期函数并调用
+  mounted() {
+    this.scroll = new Bscroll(this.$refs.wrapper)
+  },
+  // 通过watch监听 letter的变化，在通过scroll的方法滚动到对应的letter位置
+  watch: {
+    letter () {
+      if (this.letter) {
+        const element = this.$refs[this.letter][0]
+        // console.log(element)
+        this.scroll.scrollToElement(element)
+      }
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+  // 略
+</style>
+
+
+```
+
+* List.vue
+
+### 实现城市搜索
+
+> 思路：搜索功能的实现就是利用循环遍历数据来寻找匹配的数据。代码如下：
+
+``` javascript
+<template>
+<div>
+      <div class="search">
+        <!-- 添加v-model 双向绑定keyword -->
+        <input v-model="keyword" 
+               type="text" 
+               class="search-input"
+               placeholder="输入城市名或拼音" 
+        />
+      </div>
+      <!-- 添加search-content -->
+      <!-- 添加 ref=search -->
+      <!-- 通过v-show来控制搜索结果是否展示 -->
+      <div class="search-content"
+           ref="search"
+           v-show="keyword"
+      >
+          <ul>
+            <!-- 通过v-for将搜索结果list遍历展示出来 -->
+            <li 
+              v-for="item of list"
+              :key='item.id'
+              class="search-item border-bottom"
+              >
+              {{item.name}}
+              </li>
+              <!--优化用户体验，增加搜索反馈-->
+              <!-- 通过v-show来控制反馈展示 -->
+              <li
+                class="search-item border-bottom"
+                v-show="hasNoData"
+              >
+                没有找到匹配数据
+              </li>
+          </ul>
+      </div>
+  </div>
+</template>
+
+<script>
+// 导入better-scorll组件
+import Bscroll from "better-scroll"
+export default {
+  name: 'CitySearch',
+  // 指定接收传入cities数据类型
+  props:{
+    cities: Object
+  },
+  // 在data里初始化keyword,list,timer
+  // keyword是我们搜索的关键字
+  // list是搜索之后的结果数据
+  // timer是一个提高搜索性能的计时器
+  data () {
+    return {
+      keyword: '',
+      list: [],
+      timer: null
+    }
+  },
+  // 通过取反判定是否有数据
+  computed:{
+    hasNoData () {
+      console.log(!this.list.length)
+      return !this.list.length
+    }
+  },
+  // 添加watch监听keyword函数
+  watch:{
+    keyword () {
+      // 监听timer并初始化timer
+      if(this.timer){
+        clearTimeout(this.timer)
+      }
+      // 监听keyword,并在搜索框为空时初始化搜索结果
+      if (!this.keyword) {
+        this.list = []
+        return
+      }
+      this.timer = setTimeout( () => {
+        // 初始化result为空数组，用来接收搜索结果
+        const result = []
+        // 先通过for循环遍历cities
+        for (let i in this.cities) {
+          // console.log(this.cities[i])
+        // 在一次遍历cities[i]来获取具体的地名拼音和名字 
+          this.cities[i].forEach((value) => {
+            // 通过数组索引值来判定是否找到对应的拼音和地名
+            if (value.spell.indexOf(this.keyword) > -1
+              || value.name.indexOf(this.keyword) > -1
+            ){
+              // 将找到的value推送到result中
+              result.push(value)
+            }
+          })
+        }
+          // 在将遍历完成后的result数组结果赋值给list
+        this.list = result
+      },100)
+    }
+  },
+  // 添加生命周期函数mounted
+  mounted () {
+    this.scroll =new Bscroll(this.$refs.search)
+  }
+
+}
+</script>
+
+<style lang="stylus" scoped>
+  @import '~styles/varibles.styl'
+    .search
+      background $bgColor
+      height .72rem
+      padding 0 .1rem
+      .search-input
+        box-sizing border-box
+        width 100%
+        height .62rem
+        line-height .62rem
+        padding 0 .1rem
+        text-align center
+        border-radius .06rem
+        color #666 
+        // 给search-content添加样式与search平级
+    .search-content
+      overflow hidden
+      position: absolute
+      top:1.58rem
+      left:0
+      right: 0 
+      bottom: 0
+      background #eee
+      z-index:1
+      .search-item
+        line-height: .62rem
+        padding-left: .2rem
+        background #fff
+        color: #666
+</style>
+
+```
+
+* Search.vue
