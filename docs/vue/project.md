@@ -3268,4 +3268,324 @@ export default {
 
 > Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
-![](/img/vuex.png)
+![vuex](/img/vuex.png)
+
+* 先在创建分支 city-vuex,然后在本地仓库拉取远程分支并切换到新的分支，然后通过npm安装vuex插件
+
+``` bash
+git pull
+# 拉取新分支
+
+git checkout city-vuex
+#切换到新的分支 city-vuex
+
+npm install vuex --save
+#安装vuex 
+
+```
+
+* 在src目录下新建store文件夹，在store文件夹下新建vuex.js文件
+
+``` javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+    // 通过state保存共享数据
+    state: {
+        city: '长沙'
+    },
+    // actions接收changeCity函数传递过来的city,在通过ctx.commit将city传递出去
+    actions: {
+        changeCity (ctx,city) {
+            ctx.commit('changeCity',city)
+            console.log(city)
+        }
+    },
+    //在通过mutations里的changeCity函数将city传递给state 
+    mutations: {
+        changeCity (state,city) {
+            state.city = city
+        }
+    }
+})
+```
+* store/vuex.js
+
+> 我们在修改main.js,导入vuex
+
+``` javascript
+
+import Vue from 'vue'
+import App from './App'
+import router from './router'
+import fastClick from 'fastclick'
+// 导入fastclick解决手机或浏览器可能的300毫秒延迟的问题
+import store from './store/vuex'
+// 导入store目录下的vuex
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+// 导入VueAwesomeSwiper 组件
+import './assets/styles/reset.css'
+// 重置所有样式
+import './assets/styles/border.css'
+import 'styles/iconfont.css'
+
+// 解决移动端1像素边框问题
+import 'swiper/dist/css/swiper.css'
+// 导入swiper样式表
+
+Vue.config.productionTip = false
+fastClick.attach(document.body)
+// 调用fastClick绑定到document.body上
+Vue.use(VueAwesomeSwiper)
+// 调用VueAwesomeSwiper
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router,
+  store,
+  // 在vue中使用store，而store代表就是vuex导出仓库
+  components: { App },
+  template: '<App/>'
+})
+
+```
+* main.js
+
+> 先修改Home.vue和components/header.vue里的city数据，我们通过vuex来传递city的数据
+```javascript
+<template>
+     <div class="header">
+        <div class="header-left">
+            <div class="iconfont back-icon">&#xe622;</div>
+        </div>
+        <div class="header-input">
+              <span class="iconfont">&#xe647;</span>
+                 输入城市/景点/游玩主题
+        </div>
+        <!-- 使用router-link标签包裹header-right标签并制定路由跳转到'/city'-->
+        <router-link to='/city'>
+            <div class="header-right">
+              <!--  -->
+                <!-- {{this.city}} -->
+                <!-- 使用vuex中的state里公用数据 -->
+                {{this.$store.state.city}}
+                <!-- 传入城市的名称 -->
+                <span class="iconfont arrow-icon">&#xe6aa;</span>
+            </div>
+        </router-link>
+     </div>
+</template>
+
+<script>
+export default {
+  name: 'HomeHeader'
+  // 使用vuex后就不在需要外部传递的city
+  // props: {
+  //   city: String
+  //   // 通过props指定接受数据的类型，city必须是String字符串类型
+  // }
+}
+</script>
+
+<style lang='stylus'>
+// 略
+</style>
+```
+* home/components/header.vue
+
+```javascript
+<template>
+     <div>
+                        <!-- 通过绑定city属性来传值 -->
+                        <!-- 使用vuex之后就不需要从外部传递数据了 -->
+         <!-- <home-header :city='city'></home-header> -->
+        <home-header></home-header>        
+                      <!-- 绑定list来传递swiperList数据-->
+         <home-swiper :list='swiperList'></home-swiper>
+         <home-icons :list="iconList"></home-icons>
+         <home-hot :list='hotList'></home-hot>
+         <home-liked :list='likeList'></home-liked>
+         <home-weekend :list='weekendList'></home-weekend>
+     </div>
+</template>
+
+<script>
+import HomeHeader from './components/Header'
+import HomeSwiper from './components/Swiper'
+import HomeIcons from './components/Icons'
+import HomeHot from './components/Hot'
+import HomeLiked from './components/Liked'
+import HomeWeekend from './components/Weekend'
+import axios from 'axios'
+// 引入axions
+export default {
+  name: 'Home',
+  components: {
+    HomeHeader,
+    HomeSwiper,
+    HomeIcons,
+    HomeHot,
+    HomeLiked,
+    HomeWeekend
+  },
+  data () {
+    return {
+      // 使用vuex后不再需要city
+      // city:'',
+      swiperList: [],
+      iconList: [],
+      hotList: [],
+      likeList: [],
+      weekendList: []
+    }
+  },
+  // 在methods中定义函数getHomeInfo()
+  methods: {
+    getHomeInfo () {
+      // getHomeInfo中使用axios请求index.json的数据，然后执行getHomeInfoSucc函数
+      axios.get('/api/index.json').then(this.getHomeInfoSucc)
+      //static目录下的文件可以在地址栏上直接访问，src目录下文件不能直接访问，
+      //但是从上线和安全角度考虑我们需要使用代理转发机制将真实的访问目录隐藏替换成api
+      //我们可以在config目录下的index.js文件里proxyTable里实现这个功能
+    },
+    getHomeInfoSucc (res) {
+      // 统一获取页面模拟的数据
+        res = res.data
+        if(res.ret && res.data){
+          // 判定res.ret返回是否真并且数据是否存在
+          const data = res.data
+          // 使用vuex后就不需要在传递city数据
+          // this.city = data.city
+          this.swiperList = data.swiperList
+          this.iconList = data.iconList
+          this.hotList = data.hotList
+          this.likeList = data.likeList
+          this.weekendList = data.weekendList
+        }
+      // console.log(res)
+      // getHomeInfoSucc会将获取成功的数据打印
+    }
+  },
+  // 生命周期函数mounted
+  mounted () {
+    //在生命周期中执行getHomeInfo函数
+    this.getHomeInfo()
+
+  }
+}
+
+</script>
+
+<style lang="stylus" scoped>
+
+</style>
+
+``` 
+
+* home/Home.vue
+
+> 我们再修改List.vue来进一步完善我们的代码
+
+```javascript
+<template>
+  <div class="list" ref="wrapper">
+    <!-- 添加 ref  -->
+    <div>
+      <div class="area">
+        <div class="title border-topbottom">当前城市</div>
+        <div class="button-list">
+          <div class="button-wrapper">
+            <!-- <div class="button">北京</div> -->
+            <!-- 我们采用vuex的store来传递city -->
+            <div class="button">{{this.$store.state.city}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="area">
+        <div class="title border-topbottom">热门城市</div>
+        <div class="button-list">
+          <!-- 通过item循环遍历传入的数据hot -->
+          <!-- 在使用vuex时添加handleCityClick函数 -->
+          <div class="button-wrapper" 
+               v-for="item of hot" 
+               :key="item.id"
+               @click='handleCityClick(item.name)'
+            >
+            <div class="button">{{item.name}}</div>
+          </div>
+        </div>
+      </div>
+      <!-- 添加ref值为key -->
+      <div class="area" 
+      v-for="(item, key) of cities" 
+      :key='key'
+      :ref='key'
+      >
+        <div class="title border-topbottom">{{key}}</div>
+        <div class="item-list">
+           <!-- 在使用vuex时添加click事件绑定handleCityClick函数 -->
+          <div class="item border-bottom" 
+          v-for="innerItem of item"
+          :key="innerItem.id"
+          @click='handleCityClick(innerItem.name)'
+          >
+          {{innerItem.name}}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import Bscroll from "better-scroll"
+// 添加better-scroll
+export default {
+  name: "CityList",
+  // props种指定传入数据的类型
+  // 指定接收传入的letter数据类型为String
+  props: {
+    hot: Array,
+    cities: Object,
+    letter: String
+  },
+  // 添加hanleCityClick函数
+  methods:{
+    // handleCityClick函数实现的时点击城市时将获取的城市通过dispatch方法传递给Actions下的changeCity方法
+  //  添加路由跳转到首页
+   handleCityClick (city) {
+      this.$store.dispatch('changeCity',city)
+      // 通过路由来实现页面跳转
+      this.$router.push('/')
+      // 、alert(city)
+  
+    }
+  },
+
+  // 添加声明周期函数并调用
+  // better-scroll默认会关闭click事件，我们需要单独开启click事件
+  mounted() {
+    this.scroll = new Bscroll(this.$refs.wrapper,{click: true})
+  },
+  // 通过watch监听 letter的变化，在通过scroll的方法滚动到对应的letter位置
+  watch: {
+    letter () {
+      if (this.letter) {
+        const element = this.$refs[this.letter][0]
+        // console.log(element)
+        this.scroll.scrollToElement(element)
+      }
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+// 略
+</style>
+```
+* city/components/List.vue
