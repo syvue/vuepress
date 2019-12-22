@@ -19,7 +19,7 @@ npm config set registry http://registry.npm.taobao.org/
 
 > 使用Github或者码云创建一个新的仓库并克隆到本地桌面。
 
-![](/img/git01.jpg)
+![](/vuepress/img/git01.jpg)
 ``` bash
   git clone xxx对应的仓库地址
 ```
@@ -50,7 +50,7 @@ npm config set registry http://registry.npm.taobao.org/
 * 然后对比Windows环境变量。
 
 
-![](/img/path.jpg)
+![](/vuepress/img/path.jpg)
 
 * 修改Window中**Path**中的对应的环境变量。
 
@@ -112,7 +112,7 @@ Documentation can be found at https://vuejs-templates.github.io/webpack
 
 ## 项目目录说明
 
-![](/img/index.jpg)
+![](/vuepress/img/index.jpg)
 
 * build----项目构建(webpack)相关代码
 
@@ -187,7 +187,7 @@ a {
 
 ## 多页应用和单页应用
 
-![](/img/page1.jpg)
+![](/vuepress/img/page1.jpg)
 
 >**多页应用**
   优点：
@@ -198,7 +198,7 @@ a {
 >  页面切换慢：每次切换页面都要发送htttp请求，如果网速慢，页面之间切换就会出现明显卡顿。  
 
 
-![](/img/page2.jpg)
+![](/vuepress/img/page2.jpg)
 
 > **单页应用**
 > 利用Vue开发的应用是单页面应用，在url变化时，js会感知到，然后动态地将当前页面上的内容清除掉，再将下一个页面的内容挂载到页面上。此时，路由不是后端去做，而是由前端来做。
@@ -267,7 +267,7 @@ export default new Router({
 ## 项目初始化
 
 ### 导入依赖文件
-![](/img/init01.jpg)
+![](/vuepress/img/init01.jpg)
 
 > 首先将border.css,reset.css和iconfont相关文件复制到assets目录下的styles目录中。
 
@@ -278,7 +278,7 @@ export default new Router({
 * iconfont相关文件是用来解决图标的问题
   > iconfont使用我们需要先登录**https://www.iconfont.cn/** 然后注册之后搜索我们需要的图标，然后下载，再将iconfont.css 复制到styles目录下 iconfont.eot iconfont.svg iconfont.ttf iconfont.woff 这4个字体文件复制sytles/iconfont目录下，然后修改iconfont.css文件，在对应的url地址上添加./iconfont目录，修改后如下图
 
-![](/img/init02.jpg)
+![](/vuepress/img/init02.jpg)
 
 ### 修改项目文件
 
@@ -395,7 +395,7 @@ git push
 
 * 查看我们需要制作的页面。
 
-![](/img/page3.jpg)
+![](/vuepress/img/page3.jpg)
 
 > 我们在home目录下新建componets目录新建header.vue文件。
 
@@ -521,7 +521,7 @@ $bgColor = #00bcd4
 
 > 在正式的商业项目中，当开发一个新的功能模块时，都需要创建一个分支，当开完完成之后我们再将分支合并到主分支中。这个时候我们先打开github中我们的项目页面，点击Branch:Master然后创建分支。
 
-![](/img/git02.jpg)
+![](/vuepress/img/git02.jpg)
 
 > 我们创建index-swiper分支是在线上，然后我们需要将线上分支拉到我们本机上
 
@@ -3268,7 +3268,7 @@ export default {
 
 > Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
-![vuex](/img/vuex.png)
+![vuex](/vuepress/img/vuex.png)
 
 * 先在创建分支 city-vuex,然后在本地仓库拉取远程分支并切换到新的分支，然后通过npm安装vuex插件
 
