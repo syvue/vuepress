@@ -1,6 +1,6 @@
 # Vue.js基础
 
-![Vue](/img/logo.png)
+![Vue](/vuepress/img/logo.png)
 
 [Vue.js官方网站](https://cn.vuejs.org/)
 

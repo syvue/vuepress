@@ -7,7 +7,7 @@ module.exports = {
       href: `/img/favicon.ico`
     }]
   ],
-
+  base:'/vuepress/',
   themeConfig:{
     nav:[
       {text:'首页',link:'/'},
@@ -40,6 +40,8 @@ module.exports = {
       collapsable: true,
       children: ['/vue/vuePress']
     }
-    ]
+    ],
+    repo:'syvue/vuepress',
+    repoLabel:'本项目源代码'
   }
 }

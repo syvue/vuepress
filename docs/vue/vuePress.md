@@ -35,7 +35,8 @@
 * 建立基本目录和相应文件此时目录结构如下：
 ```bash
 documents
-├─package.json
+├─package.json              
+├─.gitignore
 ├─docs
 |  ├─README.md
 |  ├─.vuepress
