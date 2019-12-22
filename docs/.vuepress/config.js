@@ -7,9 +7,7 @@ module.exports = {
       href: `/img/favicon.ico`
     }]
   ],
-  // dest: './docs/./vuepresss/dist',
-  // ga: "",
-  // evergreen: true,
+
   themeConfig:{
     nav:[
       {text:'首页',link:'/'},
