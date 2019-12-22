@@ -19,6 +19,7 @@ module.exports = {
         items:[
           {text:'Vue.js基础',link:'/vue/tutorial/'},
           {text:'Vue项目开发',link:'/vue/project/'},
+          {text:'VuePress',link:'/vue/vuePress/'},
         ]
       }
     ],
@@ -36,6 +37,10 @@ module.exports = {
       title: 'Vue项目开发',
       collapsable: true,
       children: ['/vue/project']
+    },{
+      title: 'VuePress',
+      collapsable: true,
+      children: ['/vue/vuePress']
     }
     ]
   }
